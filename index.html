@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LED Control</title>
+</head>
+<body>
+  <h1>LED Control</h1>
+  <button id="toggleButton">Toggle LED</button>
+  <h1>Received Serial Data</h1>
+  <ul id="data-list"></ul>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let ledState = false;
+
+    const toggleButton = document.getElementById('toggleButton');
+
+    toggleButton.addEventListener('click', () => {
+      ledState = !ledState;
+      socket.emit('toggleLED', ledState);
+    });
+
+socket.on('serialData', (data) => {
+  const dataList = document.getElementById('data-list');
+  const listItem = document.createElement('li');
+  listItem.textContent = `${data.message} - ${data.receivedTime}`;
+  dataList.appendChild(listItem);
+});
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
+  </script>
+</body>
+</html>
